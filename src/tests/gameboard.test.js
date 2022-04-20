@@ -1,6 +1,5 @@
 import * as shipFile from "../ship";
 import * as gameboardFile from "../gameboard";
-import { JS_EXT_TO_TREAT_AS_ESM } from "ts-jest";
 
 it("places ships", () => {
   let gameboard = new gameboardFile.Gameboard();
