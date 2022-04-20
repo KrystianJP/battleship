@@ -13,18 +13,18 @@ class Gameboard {
     return false;
   }
 
-  _getRowValue(pos) {
+  static getRowValue(pos) {
     return Number(pos.substring(0, pos.indexOf(":")));
   }
 
-  _getColValue(pos) {
+  static getColValue(pos) {
     return Number(pos.substring(pos.indexOf(":") + 1));
   }
 
   _minRowValue(ship) {
     let minimum = ship.positions.reduce((stored, placedPos) => {
-      if (this._getRowValue(placedPos) < stored) {
-        return this._getRowValue(placedPos);
+      if (Gameboard.getRowValue(placedPos) < stored) {
+        return Gameboard.getRowValue(placedPos);
       }
       return stored;
     }, Infinity);
@@ -32,24 +32,24 @@ class Gameboard {
   }
   _minColValue(ship) {
     return ship.positions.reduce((stored, placedPos) => {
-      if (this._getColValue(placedPos) < stored) {
-        return this._getColValue(placedPos);
+      if (Gameboard.getColValue(placedPos) < stored) {
+        return Gameboard.getColValue(placedPos);
       }
       return stored;
     }, Infinity);
   }
   _maxRowValue(ship) {
     return ship.positions.reduce((stored, placedPos) => {
-      if (this._getRowValue(placedPos) > stored) {
-        return this._getRowValue(placedPos);
+      if (Gameboard.getRowValue(placedPos) > stored) {
+        return Gameboard.getRowValue(placedPos);
       }
       return stored;
     }, -Infinity);
   }
   _maxColValue(ship) {
     return ship.positions.reduce((stored, placedPos) => {
-      if (this._getColValue(placedPos) > stored) {
-        return this._getColValue(placedPos);
+      if (Gameboard.getColValue(placedPos) > stored) {
+        return Gameboard.getColValue(placedPos);
       }
       return stored;
     }, -Infinity);
@@ -60,7 +60,7 @@ class Gameboard {
   _addToPosition(pos, direction, val) {
     if (direction === "row") {
       // getting first number
-      let rowValue = this._getRowValue(pos);
+      let rowValue = Gameboard.getRowValue(pos);
       let newRowValue = rowValue + val;
       // making sure it is within range
       if (newRowValue > 10 || newRowValue < 1) {
@@ -72,7 +72,7 @@ class Gameboard {
       return String(newRowValue) + pos.substring(pos.indexOf(":"));
     } else if (direction === "col") {
       // this is the reverse of the row branch
-      let colValue = this._getColValue(pos);
+      let colValue = Gameboard.getColValue(pos);
       let newColValue = colValue + val;
       if (newColValue > 10 || newColValue < 1) {
         throw new Error(
@@ -89,8 +89,8 @@ class Gameboard {
   _checkValidShipPosition(newShip) {
     // gives true if a single value is invalid, so must be inverted
     return !newShip.positions.some((newPos) => {
-      let newRowValue = this._getRowValue(newPos);
-      let newColValue = this._getColValue(newPos);
+      let newRowValue = Gameboard.getRowValue(newPos);
+      let newColValue = Gameboard.getColValue(newPos);
 
       // get min + max value of row and col for each ship and check if the new position values are within them +-1
       // if a single value is INVALID, return TRUE
@@ -135,16 +135,22 @@ class Gameboard {
     return false;
   }
 
-  _findGridRow(nr, cols) {
+  static findGridRow(nr, cols) {
     return Math.floor(nr / cols) + 1;
   }
 
-  _findGridCol(nr, row, cols) {
+  static findGridCol(nr, row, cols) {
     return nr - (row - 1) * cols + 1;
   }
 
+  static findPositionFromGridNr(nr, cols) {
+    let row = Gameboard.findGridRow(nr, cols);
+    let col = Gameboard.findGridCol(nr, row, cols);
+    return String(row) + ":" + String(col);
+  }
+
   // row and col starting from 1
-  _findGridNr(cols, row, col) {
+  static findGridNr(cols, row, col) {
     return cols * (row - 1) + (col - 1);
   }
 
@@ -153,10 +159,10 @@ class Gameboard {
   placeInGrid(grid, ship) {
     let shipLength = ship.positions.length;
     ship.positions.forEach((pos) => {
-      let gridNr = this._findGridNr(
+      let gridNr = Gameboard.findGridNr(
         10,
-        this._getRowValue(pos),
-        this._getColValue(pos),
+        Gameboard.getRowValue(pos),
+        Gameboard.getColValue(pos),
       );
       let gridNode = grid.children[gridNr];
       gridNode.classList.add("ship");
@@ -167,6 +173,14 @@ class Gameboard {
   static markHit(grid, gridNr) {
     let gridNode = grid.children[gridNr];
     gridNode.classList.add("hit");
+  }
+
+  static checkHit(grid, gridNr) {
+    if (grid.children[gridNr].classList.contains("ship")) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 

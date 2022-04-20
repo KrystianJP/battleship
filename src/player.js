@@ -9,11 +9,13 @@ class Player {
     otherPlayer.gameboard.receiveAttack(pos);
   }
 
+  // returns eventual attacked position
   _computerAttack(otherPlayer) {
     do {
       let [randomNr1, randomNr2] = this._randomPair();
       var position = String(randomNr1) + ":" + String(randomNr2);
     } while (!otherPlayer.gameboard.receiveAttack(position));
+    return position;
   }
 
   _randomPair() {
@@ -22,11 +24,13 @@ class Player {
     return [randomNr1, randomNr2];
   }
 
+  // returns the position that was attacked
   attack(otherPlayer, pos = undefined) {
     if (this.isHuman) {
       this._humanAttack(otherPlayer, pos);
+      return pos;
     } else {
-      this._computerAttack(otherPlayer);
+      return this._computerAttack(otherPlayer);
     }
   }
 }

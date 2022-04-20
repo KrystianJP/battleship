@@ -123,16 +123,17 @@ it("allSunk method returns false correctly", () => {
 });
 
 it("finds correct grid row", () => {
-  let gameboard = new gameboardFile.Gameboard();
-  expect(gameboard._findGridRow(7, 3)).toBe(3);
+  expect(gameboardFile.Gameboard.findGridRow(7, 3)).toBe(3);
 });
 
 it("finds correct grid column", () => {
-  let gameboard = new gameboardFile.Gameboard();
-  expect(gameboard._findGridCol(7, 3, 3)).toBe(2);
+  expect(gameboardFile.Gameboard.findGridCol(7, 3, 3)).toBe(2);
 });
 
 it("finds correct grid nr", () => {
-  let gameboard = new gameboardFile.Gameboard();
-  expect(gameboard._findGridNr(3, 3, 2)).toBe(7);
+  expect(gameboardFile.Gameboard.findGridNr(3, 3, 2)).toBe(7);
+});
+
+it("find correct position from grid number", () => {
+  expect(gameboardFile.Gameboard.findPositionFromGridNr(7, 3)).toBe("3:2");
 });
