@@ -38,8 +38,13 @@ body {
   display: grid;
   gap: 0;
   border: 1px solid black;
+  flex-shrink: 0;
 }
 
 .grid-cell {
   border: 1px solid black;
+}
+
+.human .ship {
+  background: blue;
 }

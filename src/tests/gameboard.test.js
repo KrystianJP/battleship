@@ -4,8 +4,7 @@ import * as gameboardFile from "../gameboard";
 it("places ships", () => {
   let gameboard = new gameboardFile.Gameboard();
   let ship = new shipFile.Ship(["1:1", "1:2"]);
-  gameboard.place(ship);
-  expect(gameboard.shipPositions).toStrictEqual(["1:1", "1:2"]);
+  expect(gameboard.place(ship)).toBe(true);
 });
 
 it("doesn't allow overlapping ships", () => {
@@ -121,4 +120,19 @@ it("allSunk method returns false correctly", () => {
   gameboard.receiveAttack("1:5");
   gameboard.receiveAttack("3:5");
   expect(gameboard.allSunk()).toBe(false);
+});
+
+it("finds correct grid row", () => {
+  let gameboard = new gameboardFile.Gameboard();
+  expect(gameboard._findGridRow(7, 3)).toBe(3);
+});
+
+it("finds correct grid column", () => {
+  let gameboard = new gameboardFile.Gameboard();
+  expect(gameboard._findGridCol(7, 3, 3)).toBe(2);
+});
+
+it("finds correct grid nr", () => {
+  let gameboard = new gameboardFile.Gameboard();
+  expect(gameboard._findGridNr(3, 3, 2)).toBe(7);
 });

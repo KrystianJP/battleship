@@ -1,16 +1,12 @@
 // 10x10 x:A-J y: 1-10
 class Gameboard {
-  static rowSize = 10;
-  static colSize = 10;
   constructor() {
-    this.shipPositions = [];
     this.hitPositions = [];
     this.ships = [];
   }
 
   place(ship) {
     if (this._checkValidShipPosition(ship)) {
-      ship.positions.forEach((position) => this.shipPositions.push(position));
       this.ships.push(ship);
       return true;
     }
@@ -67,7 +63,7 @@ class Gameboard {
       let rowValue = this._getRowValue(pos);
       let newRowValue = rowValue + val;
       // making sure it is within range
-      if (newRowValue > Gameboard.rowSize || newRowValue < 1) {
+      if (newRowValue > 10 || newRowValue < 1) {
         throw new Error(
           "Outside Of Range Error: POSITION VALUE(S) OUTSIDE OF ALLOWED RANGE",
         );
@@ -78,7 +74,7 @@ class Gameboard {
       // this is the reverse of the row branch
       let colValue = this._getColValue(pos);
       let newColValue = colValue + val;
-      if (newColValue > Gameboard.colSize || newColValue < 1) {
+      if (newColValue > 10 || newColValue < 1) {
         throw new Error(
           "Outside Of Range Error: POSITION VALUE(S) OUTSIDE OF ALLOWED RANGE",
         );
@@ -137,6 +133,35 @@ class Gameboard {
       return true;
     }
     return false;
+  }
+
+  _findGridRow(nr, cols) {
+    return Math.floor(nr / cols) + 1;
+  }
+
+  _findGridCol(nr, row, cols) {
+    return nr - (row - 1) * cols + 1;
+  }
+
+  // row and col starting from 1
+  _findGridNr(cols, row, col) {
+    return cols * (row - 1) + (col - 1);
+  }
+
+  // DOM manipulation
+  // placing the ship visually on given grid
+  placeInGrid(grid, positions) {
+    let shipLength = positions.length;
+    positions.forEach((pos) => {
+      let gridNr = this._findGridNr(
+        10,
+        this._getRowValue(pos),
+        this._getColValue(pos),
+      );
+      let gridNode = grid.children[gridNr];
+      gridNode.classList.add("ship");
+      gridNode.setAttribute("id", "ship" + String(shipLength));
+    });
   }
 }
 
