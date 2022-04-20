@@ -150,9 +150,9 @@ class Gameboard {
 
   // DOM manipulation
   // placing the ship visually on given grid
-  placeInGrid(grid, positions) {
-    let shipLength = positions.length;
-    positions.forEach((pos) => {
+  placeInGrid(grid, ship) {
+    let shipLength = ship.positions.length;
+    ship.positions.forEach((pos) => {
       let gridNr = this._findGridNr(
         10,
         this._getRowValue(pos),
@@ -162,6 +162,11 @@ class Gameboard {
       gridNode.classList.add("ship");
       gridNode.setAttribute("id", "ship" + String(shipLength));
     });
+  }
+
+  static markHit(grid, gridNr) {
+    let gridNode = grid.children[gridNr];
+    gridNode.classList.add("hit");
   }
 }
 
