@@ -1,10 +1,13 @@
 class Ship {
+  static ids = 0;
   // positions = ["1:1", "1:2" , "1:3"] "row:col"
   constructor(positions) {
     this.shipLength = positions.length;
     this.positions = positions;
     this.hitPositions = [];
     this.sunk = false;
+    this.id = Ship.ids;
+    Ship.ids++;
   }
 
   // duplicate validation occurs in Gameboard objects
