@@ -112,12 +112,12 @@ class Gameboard {
     });
   }
 
+  // will check if valid position and send the hit, the ship will then check if it is hit
   receiveAttack(pos) {
     if (!this.hitPositions.includes(pos)) {
       this.hitPositions.push(pos);
       for (let i = 0; i < this.ships.length; i++) {
-        if (this.ships[i].positions.includes(pos)) {
-          this.ships[i].hit(pos);
+        if (this.ships[i].hit(pos)) {
           break;
         }
       }

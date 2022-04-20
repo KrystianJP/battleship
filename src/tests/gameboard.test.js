@@ -52,3 +52,20 @@ it("ship receives hit", () => {
   gameboard.receiveAttack("1:1");
   expect(ship.hit).toHaveBeenCalled();
 });
+
+it("ship doesn't mark when not hit", () => {
+  let gameboard = new gameboardFile.Gameboard();
+  let ship = new shipFile.Ship(1, ["1:5"]);
+  gameboard.place(ship);
+  gameboard.receiveAttack("1:6");
+  expect(ship.hitPositions).toStrictEqual([]);
+});
+
+it("ship doesn't allow duplicate hits", () => {
+  let gameboard = new gameboardFile.Gameboard();
+  let ship = new shipFile.Ship(1, ["1:5"]);
+  gameboard.place(ship);
+  gameboard.receiveAttack("1:5");
+  gameboard.receiveAttack("1:5");
+  expect(ship.hitPositions).toStrictEqual(["1:5"]);
+});

@@ -7,11 +7,9 @@ class Ship {
     this.sunk = false;
   }
 
+  // duplicate validation occurs in Gameboard objects
   hit(position) {
-    if (
-      this.positions.includes(position) &&
-      !this.hitPositions.includes(position)
-    ) {
+    if (this.positions.includes(position)) {
       this.hitPositions.push(position);
       return true;
     }
