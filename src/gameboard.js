@@ -93,28 +93,32 @@ class Gameboard {
   _checkValidShipPosition(newShip) {
     // gives true if a single value is invalid, so must be inverted
     return !newShip.positions.some((newPos) => {
-      let newRowValue = Gameboard.getRowValue(newPos);
-      let newColValue = Gameboard.getColValue(newPos);
+      return !this.checkValidPosition(newPos);
+    });
+  }
 
-      // get min + max value of row and col for each ship and check if the new position values are within them +-1
-      // if a single value is INVALID, return TRUE
-      return this.ships.some((placedShip) => {
-        let minRowValue = this._minRowValue(placedShip);
-        let maxRowValue = this._maxRowValue(placedShip);
-        let minColValue = this._minColValue(placedShip);
-        let maxColValue = this._maxColValue(placedShip);
+  checkValidPosition(pos) {
+    let newRowValue = Gameboard.getRowValue(pos);
+    let newColValue = Gameboard.getColValue(pos);
 
-        if (
-          newRowValue >= minRowValue - 1 &&
-          newRowValue <= maxRowValue + 1 &&
-          newColValue >= minColValue - 1 &&
-          newColValue <= maxColValue + 1
-        ) {
-          // INVALID THEREFORE TRUE
-          return true;
-        }
-        return false;
-      });
+    // get min + max value of row and col for each ship and check if the new position values are within them +-1
+    // if a single value is INVALID, return TRUE
+    return !this.ships.some((placedShip) => {
+      let minRowValue = this._minRowValue(placedShip);
+      let maxRowValue = this._maxRowValue(placedShip);
+      let minColValue = this._minColValue(placedShip);
+      let maxColValue = this._maxColValue(placedShip);
+
+      if (
+        newRowValue >= minRowValue - 1 &&
+        newRowValue <= maxRowValue + 1 &&
+        newColValue >= minColValue - 1 &&
+        newColValue <= maxColValue + 1
+      ) {
+        // INVALID THEREFORE TRUE
+        return true;
+      }
+      return false;
     });
   }
 
@@ -156,6 +160,12 @@ class Gameboard {
   // row and col starting from 1
   static findGridNr(cols, row, col) {
     return cols * (row - 1) + (col - 1);
+  }
+
+  static findGridNrFromPosition(pos, cols) {
+    let row = Gameboard.getRowValue(pos);
+    let col = Gameboard.getColValue(pos);
+    return Gameboard.findGridNr(cols, row, col);
   }
 
   // DOM manipulation

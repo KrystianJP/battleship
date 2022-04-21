@@ -130,3 +130,15 @@ it("removes correct ship logically", () => {
   gameboard.removeShipLogically("P");
   expect(gameboard.ships).toStrictEqual([ship2]);
 });
+
+it("gives correct grid nr from position", () => {
+  expect(Gameboard.findGridNrFromPosition("3:2", 3)).toBe(7);
+});
+
+it("checks if position is valid correctly", () => {
+  let gameboard = new Gameboard();
+  let ship = new Ship(["1:1, 1:2"]);
+  gameboard.placeLogically(ship);
+
+  expect(gameboard.checkValidPosition("3:2")).toBe(true);
+});

@@ -27,9 +27,16 @@ let shipSelected = false;
 let selectedSize;
 let direction = "col";
 let selectionValid = false;
+let shipLengths = {
+  C: 5,
+  B: 4,
+  S: 3,
+  D: 3,
+  P: 2,
+};
 
 // event listeners
-function cellEventListeners(grid) {
+function cellShootListener(grid) {
   grid.querySelectorAll(".grid-cell").forEach((node) => {
     node.addEventListener("click", function () {
       if (playing) {
@@ -40,10 +47,85 @@ function cellEventListeners(grid) {
   });
 }
 
+function cellHoverListener(grid) {
+  for (let gridNr = 0; gridNr < 100; gridNr++) {
+    let gridCells = grid.querySelectorAll(".grid-cell");
+    let cell = gridCells[gridNr];
+    // when hovering, highlight the correct cells
+    cell.addEventListener("mouseover", () => {
+      if (selection && shipSelected) {
+        selectionValid = true;
+
+        for (let i = 0; i < selectedSize; i++) {
+          let startPosition = Gameboard.findPositionFromGridNr(gridNr, 10);
+          let position = Gameboard.addToPosition(startPosition, direction, i);
+          // making sure to flag position as invalid if it is too close to other ships too
+          if (position) {
+            if (!humanGameboard.checkValidPosition(position)) {
+              position = false;
+            }
+          }
+          if (position) {
+            gridCells[
+              Gameboard.findGridNrFromPosition(position, 10)
+            ].classList.add("selected");
+          } else {
+            selectionValid = false;
+            // highlight them all as invalid
+            for (let i = 0; i < selectedSize; i++) {
+              let startPosition = Gameboard.findPositionFromGridNr(gridNr, 10);
+              let position = Gameboard.addToPosition(
+                startPosition,
+                direction,
+                i,
+              );
+              if (position) {
+                gridCells[
+                  Gameboard.findGridNrFromPosition(position, 10)
+                ].classList.add("selected-invalid");
+              }
+            }
+          }
+        }
+      }
+    });
+
+    // when hovering off, get rid of all the changes
+    cell.addEventListener("mouseout", () => {
+      if (selection && shipSelected) {
+        selectionValid = false;
+
+        for (let i = 0; i < selectedSize; i++) {
+          let startPosition = Gameboard.findPositionFromGridNr(gridNr, 10);
+          let position = Gameboard.addToPosition(startPosition, direction, i);
+          if (position) {
+            gridCells[
+              Gameboard.findGridNrFromPosition(position, 10)
+            ].classList.remove("selected", "selected-invalid");
+          }
+        }
+      }
+    });
+  }
+}
+
 resetButt.addEventListener("click", function () {
   if (selection) {
     rotate(shipSelection, ".selection-ship");
   }
+});
+
+shipSelection.querySelectorAll(".selection-ship").forEach((ship) => {
+  ship.addEventListener("click", () => {
+    if (selection) {
+      let id = shipLengths[ship.id.substring(ship.id.length - 1)];
+      if (selectedSize !== id) {
+        selectShip(ship, shipSelection.querySelectorAll(".selection-ship"));
+      } else {
+        unselectShip(ship);
+      }
+    }
+  });
 });
 
 // initial styling
@@ -54,7 +136,10 @@ function gridCreation() {
     // entering all grid items
     insertGridCells(10, 10, gameGrid, gridCell);
   });
-  cellEventListeners(computerGrid);
+  // adding initial cell event listeners
+  // since they only exist once grid is created
+  cellShootListener(computerGrid);
+  cellHoverListener(humanGrid);
 }
 
 // rows, cols : int,
@@ -116,6 +201,7 @@ function reset() {}
 // rotate button
 // TEMPORARY VERSION
 function rotate(parent, shipSelector) {
+  // switching the direction
   switch (direction) {
     case "col":
       direction = "row";
@@ -125,12 +211,38 @@ function rotate(parent, shipSelector) {
       break;
   }
 
+  // rotating all the ships
   parent.querySelectorAll(shipSelector).forEach((ship) => {
     let width = ship.offsetWidth;
     let height = ship.offsetHeight;
     ship.style.width = String(height) + "px";
     ship.style.height = String(width) + "px";
   });
+}
+
+function selectShip(selectedShip, ships) {
+  // make sure the rest are unselected first
+  ships.forEach((ship) => {
+    unselectShip(ship);
+  });
+
+  let shipId = selectedShip.id.substring(selectedShip.id.length - 1);
+
+  shipSelected = true;
+  selectedSize = shipLengths[shipId];
+  selectionValid = false;
+
+  // add border to selected ship
+  selectedShip.style.border = "2px solid red";
+}
+
+function unselectShip(ship) {
+  shipSelected = false;
+  selectedSize = 0;
+  selectionValid = false;
+
+  // add border to selected ship
+  ship.style.border = "none";
 }
 
 // *** DELETE ONCE CUSTOM METHODS CREATED

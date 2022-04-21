@@ -116,3 +116,10 @@ body {
 #selectionP {
   width: 80px;
 }
+
+.selected {
+  background: rgb(158, 158, 255);
+}
+.selected-invalid {
+  background: rgb(255, 158, 158) !important;
+}
