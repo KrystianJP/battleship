@@ -6,17 +6,45 @@ import "../styles/style.css";
 // global variables
 const gameGrids = document.querySelectorAll(".battleship-grid");
 const [humanGrid, computerGrid] = gameGrids;
+const shipSelection = document.querySelector(".ship-selection");
+const resetButt = document.querySelector(".reset");
+
 const gridCell = document.createElement("div");
 gridCell.classList.add("grid-cell");
 const hitMark = document.createElement("div");
 hitMark.textContent = "X";
 hitMark.classList.add("hitmark", "hidden");
 gridCell.appendChild(hitMark);
+
 let humanGameboard = new Gameboard();
 let computerGameboard = new Gameboard();
 let human = new Player(true, humanGameboard);
 let computer = new Player(false, computerGameboard);
-let playing = true;
+let playing = false;
+
+let selection = true;
+let shipSelected = false;
+let selectedSize;
+let direction = "col";
+let selectionValid = false;
+
+// event listeners
+function cellEventListeners(grid) {
+  grid.querySelectorAll(".grid-cell").forEach((node) => {
+    node.addEventListener("click", function () {
+      if (playing) {
+        let gridNr = Array.prototype.indexOf.call(grid.children, node);
+        humanPlays(grid, gridNr);
+      }
+    });
+  });
+}
+
+resetButt.addEventListener("click", function () {
+  if (selection) {
+    rotate(shipSelection, ".selection-ship");
+  }
+});
 
 // initial styling
 function gridCreation() {
@@ -37,15 +65,6 @@ function insertGridCells(rows, cols, grid, cell) {
   }
 }
 
-function cellEventListeners(grid) {
-  grid.childNodes.forEach((node) => {
-    node.addEventListener("click", function () {
-      let gridNr = Array.prototype.indexOf.call(grid.children, node);
-      humanPlays(grid, gridNr);
-    });
-  });
-}
-
 // *** THIS IS WHERE THE TURNS HAPPEN
 function humanPlays(grid, gridNr) {
   Gameboard.markHit(grid, gridNr);
@@ -53,7 +72,7 @@ function humanPlays(grid, gridNr) {
   // check if human has won
   if (checkWin()) {
     // later reset
-
+    playing = false;
     return;
   }
   computerPlays();
@@ -68,6 +87,7 @@ function computerPlays() {
   Gameboard.markHit(humanGrid, gridNr);
   if (checkWin()) {
     // later reset
+    playing = false;
     return;
   }
 }
@@ -86,27 +106,44 @@ function checkWin() {
 }
 
 function winMessage(winner) {
+  // create modal
   alert(winner + " won");
 }
 
 // *** FOR LATER
 function reset() {}
 
+// rotate button
+// TEMPORARY VERSION
+function rotate(parent, shipSelector) {
+  switch (direction) {
+    case "col":
+      direction = "row";
+      break;
+    case "row":
+      direction = "col";
+      break;
+  }
+
+  parent.querySelectorAll(shipSelector).forEach((ship) => {
+    let width = ship.offsetWidth;
+    let height = ship.offsetHeight;
+    ship.style.width = String(height) + "px";
+    ship.style.height = String(width) + "px";
+  });
+}
+
 // *** DELETE ONCE CUSTOM METHODS CREATED
 function placeInitialBoats() {
-  let destroyer = new Ship(["2:2", "3:2"]);
-  let cruiser = new Ship(["5:2", "5:3", "5:4"]);
-  humanGameboard.place(destroyer);
-  humanGameboard.placeInGrid(humanGrid, destroyer);
-  humanGameboard.place(cruiser);
-  humanGameboard.placeInGrid(humanGrid, cruiser);
+  let patrolBoat = new Ship(["2:2", "2:3"], "P");
+  let submarine = new Ship(["4:4", "4:5", "4:6"], "S");
+  humanGameboard.place(humanGrid, patrolBoat);
+  humanGameboard.place(humanGrid, submarine);
 
-  let destroyer2 = new Ship(["2:2", "3:2"]);
-  let cruiser2 = new Ship(["5:2", "5:3", "5:4"]);
-  computerGameboard.place(destroyer2);
-  computerGameboard.placeInGrid(computerGrid, destroyer2);
-  computerGameboard.place(cruiser);
-  computerGameboard.placeInGrid(computerGrid, cruiser2);
+  let patrolBoatC = new Ship(["1:2", "1:3"], "P");
+  let submarineC = new Ship(["3:2", "3:3", "3:4"], "S");
+  computerGameboard.place(computerGrid, patrolBoatC);
+  computerGameboard.place(computerGrid, submarineC);
 }
 
 gridCreation();

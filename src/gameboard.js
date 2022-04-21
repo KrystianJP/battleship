@@ -5,9 +5,17 @@ class Gameboard {
     this.ships = [];
   }
 
-  place(ship) {
+  placeLogically(ship) {
     if (this._checkValidShipPosition(ship)) {
       this.ships.push(ship);
+      return true;
+    }
+    return false;
+  }
+
+  place(grid, ship) {
+    if (this.placeLogically(ship)) {
+      this.placeInGrid(grid, ship);
       return true;
     }
     return false;
@@ -57,16 +65,14 @@ class Gameboard {
 
   // direction = "row" / "col"
   // pos = "row:col"
-  _addToPosition(pos, direction, val) {
+  static addToPosition(pos, direction, val) {
     if (direction === "row") {
       // getting first number
       let rowValue = Gameboard.getRowValue(pos);
       let newRowValue = rowValue + val;
       // making sure it is within range
       if (newRowValue > 10 || newRowValue < 1) {
-        throw new Error(
-          "Outside Of Range Error: POSITION VALUE(S) OUTSIDE OF ALLOWED RANGE",
-        );
+        return false;
       }
       // concatenating to it the rest of the position
       return String(newRowValue) + pos.substring(pos.indexOf(":"));
@@ -75,9 +81,7 @@ class Gameboard {
       let colValue = Gameboard.getColValue(pos);
       let newColValue = colValue + val;
       if (newColValue > 10 || newColValue < 1) {
-        throw new Error(
-          "Outside Of Range Error: POSITION VALUE(S) OUTSIDE OF ALLOWED RANGE",
-        );
+        return false;
       }
       return pos.substring(0, pos.indexOf(":") + 1) + String(newColValue);
     } else {
@@ -166,7 +170,7 @@ class Gameboard {
       );
       let gridNode = grid.children[gridNr];
       gridNode.classList.add("ship");
-      gridNode.setAttribute("id", "ship" + String(shipLength));
+      gridNode.setAttribute("id", "ship" + String(ship.id));
     });
   }
 
@@ -181,6 +185,31 @@ class Gameboard {
     } else {
       return false;
     }
+  }
+
+  removeShipLogically(id) {
+    this.ships.some((ship) => {
+      if (ship.id === id) {
+        this.ships.splice(this.ships.indexOf(ship), 1);
+        return true;
+      }
+      return false;
+    });
+  }
+
+  removeShipFromGrid(grid, id) {
+    grid.querySelectorAll(".grid-cell").forEach((cell) => {
+      if (cell.id.substring(4) === id) {
+        cell.classList.remove("ship");
+        return true;
+      }
+      return false;
+    });
+  }
+
+  removeShip(grid, id) {
+    this.removeShipLogically(id);
+    this.removeShipFromGrid(grid, id);
   }
 }
 

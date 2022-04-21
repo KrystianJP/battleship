@@ -10,9 +10,12 @@ html {
   height: 100%;
 }
 
+body {
+  background: rgb(175, 175, 175);
+}
+
 .grids {
   display: flex;
-  background: rgb(175, 175, 175);
   height: 600px;
 }
 
@@ -49,6 +52,7 @@ html {
 .grid-cell {
   border: 1px solid black;
   position: relative;
+  background: white;
 }
 
 .human .ship {
@@ -72,6 +76,43 @@ html {
 }
 
 .bottom-container {
+  width: 100%;
   display: flex;
-  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.ship-selection {
+  display: flex;
+  gap: 10px;
+  height: 100%;
+  width: 240px;
+  flex-wrap: wrap;
+  justify-content: left;
+}
+
+.selection-ship {
+  background: blue;
+}
+
+#selectionC,
+#selectionB,
+#selectionD,
+#selectionS,
+#selectionP {
+  height: 40px;
+}
+
+#selectionC {
+  width: 200px;
+}
+#selectionB {
+  width: 160px;
+}
+#selectionD,
+#selectionS {
+  width: 120px;
+}
+#selectionP {
+  width: 80px;
 }
