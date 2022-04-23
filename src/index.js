@@ -162,14 +162,22 @@ function cellGridListeners(grid) {
 }
 
 multiButt.addEventListener("click", function () {
-  if (selection) {
+  console.log("yo");
+  if (multiButt.textContent === "START") {
+    console.log("start");
+    selection = false;
+    playing = true;
+    multiButt.textContent = "RESET";
+  } else if (multiButt.textContent === "ROTATE") {
     rotate(shipSelection, ".selection-ship");
+  } else if (multiButt.textContent === "RESET") {
+    reset();
+    multiButt.textContent = "ROTATE";
   }
 });
 
 shipSelection.addEventListener("click", function () {
   if (selection && isShipSelected) {
-    console.log("hey");
     unselectShip(shipSelection.querySelector("#selection" + selectedId));
   }
 });
@@ -178,7 +186,6 @@ shipSelection.querySelectorAll(".selection-ship").forEach((ship) => {
   ship.addEventListener("click", (e) => {
     let id = ship.id.substring(ship.id.length - 1);
     if (selection && !placedShipIds.includes(id)) {
-      console.log("yo");
       if (selectedId !== id) {
         selectShip(ship, shipSelection.querySelectorAll(".selection-ship"));
       } else {
