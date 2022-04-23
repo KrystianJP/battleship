@@ -12,11 +12,21 @@ html {
 
 body {
   background: rgb(175, 175, 175);
+  display: grid;
+  grid-template-rows: 1fr auto;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "human computer"
+    "bottom bottom";
+  gap: 0;
 }
 
-.grids {
-  display: flex;
-  height: 600px;
+.human {
+  grid-area: human;
+}
+
+.computer {
+  grid-area: computer;
 }
 
 .player-container {
@@ -24,7 +34,7 @@ body {
   display: flex;
   align-items: center;
   flex-direction: column;
-  gap: 40px;
+  gap: 20px;
   padding: 30px;
   border-bottom: 10px solid rgb(51, 51, 51);
 }
@@ -54,7 +64,8 @@ body {
   background: white;
 }
 
-.human .ship {
+/* CHANGE THIS TO HUMAN TO HIDE COMPUTER SHIPS */
+.grid-cell.ship {
   background: blue;
 }
 
@@ -71,11 +82,12 @@ body {
 }
 
 .bottom-container {
+  grid-area: bottom;
   width: 100%;
   display: flex;
   align-items: center;
   flex-direction: column;
-  padding-top: 20px;
+  padding: 20px;
   gap: 20px;
 }
 
@@ -125,7 +137,7 @@ body {
   background: rgb(84, 84, 255);
 }
 
-.rotate-button {
+.multi-button {
   border: none;
   padding: 10px;
   font-size: 18px;
@@ -133,7 +145,7 @@ body {
   background: rgb(84, 84, 255);
   color: white;
 }
-.rotate-button:hover {
+.multi-button:hover {
   background: rgb(108, 108, 255);
   cursor: pointer;
 }

@@ -7,14 +7,10 @@ import "../styles/style.css";
 const gameGrids = document.querySelectorAll(".battleship-grid");
 const [humanGrid, computerGrid] = gameGrids;
 const shipSelection = document.querySelector(".ship-selection");
-const rotateButt = document.querySelector(".rotate-button");
+const multiButt = document.querySelector(".multi-button");
 
 const gridCell = document.createElement("div");
 gridCell.classList.add("grid-cell");
-const hitMark = document.createElement("div");
-hitMark.textContent = "X";
-hitMark.classList.add("hitmark", "hidden");
-gridCell.appendChild(hitMark);
 
 let humanGameboard = new Gameboard();
 let computerGameboard = new Gameboard();
@@ -161,7 +157,7 @@ function cellGridListeners(grid) {
   }
 }
 
-rotateButt.addEventListener("click", function () {
+multiButt.addEventListener("click", function () {
   if (selection) {
     rotate(shipSelection, ".selection-ship");
   }
