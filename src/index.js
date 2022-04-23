@@ -162,9 +162,7 @@ function cellGridListeners(grid) {
 }
 
 multiButt.addEventListener("click", function () {
-  console.log("yo");
   if (multiButt.textContent === "START") {
-    console.log("start");
     selection = false;
     playing = true;
     multiButt.textContent = "RESET";
@@ -220,6 +218,13 @@ function insertGridCells(rows, cols, grid, cell) {
 
 // *** THIS IS WHERE THE TURNS HAPPEN
 function humanPlays(grid, gridNr) {
+  if (
+    computerGrid
+      .querySelectorAll(".grid-cell")
+      [gridNr].classList.contains("hit")
+  ) {
+    return;
+  }
   Gameboard.markHit(grid, gridNr);
   human.attack(computer, Gameboard.findPositionFromGridNr(gridNr, 10));
   // check if human has won
