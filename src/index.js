@@ -7,7 +7,7 @@ import "../styles/style.css";
 const gameGrids = document.querySelectorAll(".battleship-grid");
 const [humanGrid, computerGrid] = gameGrids;
 const shipSelection = document.querySelector(".ship-selection");
-const resetButt = document.querySelector(".reset");
+const rotateButt = document.querySelector(".rotate-button");
 
 const gridCell = document.createElement("div");
 gridCell.classList.add("grid-cell");
@@ -23,8 +23,8 @@ let computer = new Player(false, computerGameboard);
 let playing = false;
 
 let selection = true;
-let shipSelected = false;
-let selectedSize;
+let isShipSelected = false;
+let selectedId;
 let direction = "col";
 let selectionValid = false;
 let shipLengths = {
@@ -34,6 +34,7 @@ let shipLengths = {
   D: 3,
   P: 2,
 };
+let placedShipIds = [];
 
 // event listeners
 function cellShootListener(grid) {
@@ -47,16 +48,16 @@ function cellShootListener(grid) {
   });
 }
 
-function cellHoverListener(grid) {
+function cellGridListeners(grid) {
   for (let gridNr = 0; gridNr < 100; gridNr++) {
     let gridCells = grid.querySelectorAll(".grid-cell");
     let cell = gridCells[gridNr];
     // when hovering, highlight the correct cells
     cell.addEventListener("mouseover", () => {
-      if (selection && shipSelected) {
+      if (selection && isShipSelected) {
         selectionValid = true;
 
-        for (let i = 0; i < selectedSize; i++) {
+        for (let i = 0; i < shipLengths[selectedId]; i++) {
           let startPosition = Gameboard.findPositionFromGridNr(gridNr, 10);
           let position = Gameboard.addToPosition(startPosition, direction, i);
           // making sure to flag position as invalid if it is too close to other ships too
@@ -72,7 +73,7 @@ function cellHoverListener(grid) {
           } else {
             selectionValid = false;
             // highlight them all as invalid
-            for (let i = 0; i < selectedSize; i++) {
+            for (let i = 0; i < shipLengths[selectedId]; i++) {
               let startPosition = Gameboard.findPositionFromGridNr(gridNr, 10);
               let position = Gameboard.addToPosition(
                 startPosition,
@@ -92,10 +93,10 @@ function cellHoverListener(grid) {
 
     // when hovering off, get rid of all the changes
     cell.addEventListener("mouseout", () => {
-      if (selection && shipSelected) {
+      if (selection && isShipSelected) {
         selectionValid = false;
 
-        for (let i = 0; i < selectedSize; i++) {
+        for (let i = 0; i < shipLengths[selectedId]; i++) {
           let startPosition = Gameboard.findPositionFromGridNr(gridNr, 10);
           let position = Gameboard.addToPosition(startPosition, direction, i);
           if (position) {
@@ -106,10 +107,61 @@ function cellHoverListener(grid) {
         }
       }
     });
+    // removing placed shit when clicked
+    cell.addEventListener("click", () => {
+      if (!isShipSelected && selection) {
+        let selectedShip;
+        let position = Gameboard.findPositionFromGridNr(gridNr, 10);
+        for (let ship of humanGameboard.ships) {
+          if (ship.positions.includes(position)) {
+            selectedShip = ship;
+            break;
+          }
+        }
+
+        if (selectedShip) {
+          let shipElement = shipSelection.querySelector(
+            "#selection" + selectedShip.id,
+          );
+          for (let selectedPos of selectedShip.positions) {
+            let posGridNr = Gameboard.findGridNrFromPosition(selectedPos, 10);
+            gridCells[posGridNr].classList.remove("selected");
+          }
+          humanGameboard.removeShip(grid, selectedShip.id);
+          placedShipIds.splice(placedShipIds.indexOf(selectedShip.id), 1);
+          selectShip(
+            shipElement,
+            shipSelection.querySelectorAll(".selection-ship"),
+          );
+          shipElement.classList.remove("greyed-out");
+        }
+      }
+    });
+
+    // when clicking on the grid to place
+    cell.addEventListener("click", () => {
+      if (isShipSelected && selection && selectionValid) {
+        let positions = [];
+        let shipElement = shipSelection.querySelector(
+          "#selection" + selectedId,
+        );
+        for (let i = 0; i < shipLengths[selectedId]; i++) {
+          let startPosition = Gameboard.findPositionFromGridNr(gridNr, 10);
+          let position = Gameboard.addToPosition(startPosition, direction, i);
+          positions.push(position);
+        }
+        let ship = new Ship(positions, selectedId);
+        humanGameboard.place(grid, ship);
+        placedShipIds.push(selectedId);
+        // grey it out
+        unselectShip(shipElement);
+        shipElement.classList.add("greyed-out");
+      }
+    });
   }
 }
 
-resetButt.addEventListener("click", function () {
+rotateButt.addEventListener("click", function () {
   if (selection) {
     rotate(shipSelection, ".selection-ship");
   }
@@ -117,9 +169,9 @@ resetButt.addEventListener("click", function () {
 
 shipSelection.querySelectorAll(".selection-ship").forEach((ship) => {
   ship.addEventListener("click", () => {
-    if (selection) {
-      let id = shipLengths[ship.id.substring(ship.id.length - 1)];
-      if (selectedSize !== id) {
+    let id = ship.id.substring(ship.id.length - 1);
+    if (selection && !placedShipIds.includes(id)) {
+      if (selectedId !== id) {
         selectShip(ship, shipSelection.querySelectorAll(".selection-ship"));
       } else {
         unselectShip(ship);
@@ -139,7 +191,7 @@ function gridCreation() {
   // adding initial cell event listeners
   // since they only exist once grid is created
   cellShootListener(computerGrid);
-  cellHoverListener(humanGrid);
+  cellGridListeners(humanGrid);
 }
 
 // rows, cols : int,
@@ -220,25 +272,27 @@ function rotate(parent, shipSelector) {
   });
 }
 
-function selectShip(selectedShip, ships) {
+function selectShip(selectedShipElement, shipElements) {
   // make sure the rest are unselected first
-  ships.forEach((ship) => {
+  shipElements.forEach((ship) => {
     unselectShip(ship);
   });
 
-  let shipId = selectedShip.id.substring(selectedShip.id.length - 1);
+  let shipId = selectedShipElement.id.substring(
+    selectedShipElement.id.length - 1,
+  );
 
-  shipSelected = true;
-  selectedSize = shipLengths[shipId];
+  isShipSelected = true;
+  selectedId = shipId;
   selectionValid = false;
 
   // add border to selected ship
-  selectedShip.style.border = "2px solid red";
+  selectedShipElement.style.border = "2px solid red";
 }
 
 function unselectShip(ship) {
-  shipSelected = false;
-  selectedSize = 0;
+  isShipSelected = false;
+  selectedId = "";
   selectionValid = false;
 
   // add border to selected ship
@@ -247,10 +301,10 @@ function unselectShip(ship) {
 
 // *** DELETE ONCE CUSTOM METHODS CREATED
 function placeInitialBoats() {
-  let patrolBoat = new Ship(["2:2", "2:3"], "P");
-  let submarine = new Ship(["4:4", "4:5", "4:6"], "S");
-  humanGameboard.place(humanGrid, patrolBoat);
-  humanGameboard.place(humanGrid, submarine);
+  // let patrolBoat = new Ship(["1:2", "1:3"], "P");
+  // let submarine = new Ship(["3:2", "3:3", "3:4"], "S");
+  // humanGameboard.place(humanGrid, patrolBoat);
+  // humanGameboard.place(humanGrid, submarine);
 
   let patrolBoatC = new Ship(["1:2", "1:3"], "P");
   let submarineC = new Ship(["3:2", "3:3", "3:4"], "S");
