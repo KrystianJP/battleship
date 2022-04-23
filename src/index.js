@@ -23,6 +23,7 @@ let isShipSelected = false;
 let selectedId;
 let direction = "col";
 let selectionValid = false;
+let placedShipIds = [];
 let shipLengths = {
   C: 5,
   B: 4,
@@ -30,7 +31,6 @@ let shipLengths = {
   S: 3,
   P: 2,
 };
-let placedShipIds = [];
 
 // event listeners
 function cellShootListener(grid) {
@@ -283,7 +283,26 @@ function winMessage(winner) {
 }
 
 // *** FOR LATER
-function reset() {}
+function reset() {
+  gameGrids.forEach((grid) => {
+    grid.textContent = "";
+  });
+  gridCreation();
+  shipSelection.querySelectorAll(".selection-ship").forEach((ship) => {
+    ship.classList.remove("greyed-out");
+  });
+  humanGameboard.hitPositions = [];
+  humanGameboard.ships = [];
+  computerGameboard.hitPositions = [];
+  computerGameboard.ships = [];
+  selection = true;
+  isShipSelected = false;
+  selectedId;
+  direction = "col";
+  selectionValid = false;
+  placedShipIds = [];
+  playing = false;
+}
 
 // rotate button
 // TEMPORARY VERSION
