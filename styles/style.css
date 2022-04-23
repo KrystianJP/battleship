@@ -78,7 +78,7 @@ body {
 }
 
 .ship.hit {
-  background: rgb(255, 158, 158);
+  background: rgb(255, 68, 68);
 }
 
 .bottom-container {
@@ -148,4 +148,8 @@ body {
 .multi-button:hover {
   background: rgb(108, 108, 255);
   cursor: pointer;
+}
+
+.ship.hit.sunk {
+  background: rgb(116, 15, 15);
 }

@@ -1,3 +1,5 @@
+import { Gameboard } from "./gameboard";
+
 class Ship {
   // positions = ["1:1", "1:2" , "1:3"] "row:col"
   // id = "C" / "B" / "D" / "S" / "P"
@@ -24,6 +26,19 @@ class Ship {
       return true;
     }
     return false;
+  }
+
+  sink(grid) {
+    for (let pos of this.positions) {
+      let gridNr = Gameboard.findGridNrFromPosition(pos, 10);
+      grid.querySelectorAll(".grid-cell")[gridNr].classList.add("sunk");
+    }
+  }
+
+  findGridNrFromPosition(pos, cols) {
+    let row = Gameboard.getRowValue(pos);
+    let col = Gameboard.getColValue(pos);
+    return Gameboard.findGridNr(cols, row, col);
   }
 }
 

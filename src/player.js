@@ -51,7 +51,6 @@ class Player {
       for (let i = 0; i < shipLength; i++) {
         positions.push(Gameboard.addToPosition(startPos, direction, i));
       }
-      console.log(positions);
       if (positions.some((pos) => pos === false)) {
         continue;
       }

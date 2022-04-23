@@ -225,6 +225,13 @@ function humanPlays(grid, gridNr) {
   }
   Gameboard.markHit(grid, gridNr);
   human.attack(computer, Gameboard.findPositionFromGridNr(gridNr, 10));
+  computerGameboard.ships.some((ship) => {
+    if (ship.isSunk()) {
+      ship.sink(grid);
+      return true;
+    }
+    return false;
+  });
   // check if human has won
   if (checkWin()) {
     // later reset
