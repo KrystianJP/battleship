@@ -6,7 +6,7 @@ class Gameboard {
   }
 
   placeLogically(ship) {
-    if (this._checkValidShipPosition(ship)) {
+    if (this.checkValidShipPosition(ship)) {
       this.ships.push(ship);
       return true;
     }
@@ -90,7 +90,7 @@ class Gameboard {
   }
 
   // checks if ship's position is valid by checking it is near or overlapping existing ship
-  _checkValidShipPosition(newShip) {
+  checkValidShipPosition(newShip) {
     // gives true if a single value is invalid, so must be inverted
     return !newShip.positions.some((newPos) => {
       return !this.checkValidPosition(newPos);
@@ -220,6 +220,24 @@ class Gameboard {
   removeShip(grid, id) {
     this.removeShipLogically(id);
     this.removeShipFromGrid(grid, id);
+  }
+
+  generateRandomShips(player, grid) {
+    for (let shipType of [
+      ["C", 5],
+      ["B", 4],
+      ["D", 3],
+      ["S", 3],
+      ["P", 2],
+    ]) {
+      while (true) {
+        let ship = player.randomShipPosition(shipType[1], shipType[0]); // ship object / false
+        if (ship) {
+          this.place(grid, ship);
+          break;
+        }
+      }
+    }
   }
 }
 
