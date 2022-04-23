@@ -130,6 +130,7 @@ function cellGridListeners(grid) {
           );
           shipElement.classList.remove("greyed-out");
           hoverSelection(selectedShip.id, gridNr, gridCells);
+          multiButt.textContent = "ROTATE";
         }
       }
     });
@@ -152,6 +153,9 @@ function cellGridListeners(grid) {
         // grey it out
         unselectShip(shipElement);
         shipElement.classList.add("greyed-out");
+        if (placedShipIds.length >= 5) {
+          multiButt.textContent = "START";
+        }
       }
     });
   }
