@@ -225,13 +225,9 @@ function humanPlays(grid, gridNr) {
   }
   Gameboard.markHit(grid, gridNr);
   human.attack(computer, Gameboard.findPositionFromGridNr(gridNr, 10));
-  computerGameboard.ships.some((ship) => {
-    if (ship.isSunk()) {
-      ship.sink(grid);
-      return true;
-    }
-    return false;
-  });
+
+  // check if any ships are sunk
+  sinkShips(grid, computerGameboard);
   // check if human has won
   if (checkWin()) {
     // later reset
@@ -247,12 +243,25 @@ function computerPlays() {
   let rowValue = Gameboard.getRowValue(attackPosition);
   let colValue = Gameboard.getColValue(attackPosition);
   let gridNr = Gameboard.findGridNr(10, rowValue, colValue);
+
   Gameboard.markHit(humanGrid, gridNr);
+  sinkShips(humanGrid, humanGameboard);
+
   if (checkWin()) {
     // later reset
     playing = false;
     return;
   }
+}
+
+function sinkShips(grid, gameboard) {
+  gameboard.ships.forEach((ship) => {
+    if (ship.isSunk()) {
+      ship.sink(grid);
+      return true;
+    }
+    return false;
+  });
 }
 
 function checkWin() {
@@ -332,17 +341,4 @@ function startGame() {
   computerGameboard.generateRandomShips(computer, computerGrid);
 }
 
-// *** DELETE ONCE CUSTOM METHODS CREATED
-function placeInitialBoats() {
-  // let patrolBoat = new Ship(["1:2", "1:3"], "P");
-  // let submarine = new Ship(["3:2", "3:3", "3:4"], "S");
-  // humanGameboard.place(humanGrid, patrolBoat);
-  // humanGameboard.place(humanGrid, submarine);
-  // let patrolBoatC = new Ship(["1:2", "1:3"], "P");
-  // let submarineC = new Ship(["3:2", "3:3", "3:4"], "S");
-  // computerGameboard.place(computerGrid, patrolBoatC);
-  // computerGameboard.place(computerGrid, submarineC);
-}
-
 gridCreation();
-placeInitialBoats();
