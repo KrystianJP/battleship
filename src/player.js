@@ -1,3 +1,6 @@
+import { Gameboard } from "./gameboard";
+import { Ship } from "./ship";
+
 class Player {
   // isHuman = true / false
   constructor(isHuman, gameboard) {
@@ -32,6 +35,33 @@ class Player {
     } else {
       return this._computerAttack(otherPlayer);
     }
+  }
+
+  // this methods requires both gameboard and ship classes
+  randomShipPosition(shipLength, shipId) {
+    let positions;
+
+    while (true) {
+      positions = [];
+      let startPos =
+        String(Math.floor(Math.random() * 9) + 1) +
+        ":" +
+        String(Math.floor(Math.random() * 9) + 1);
+      let direction = ["col", "row"][Math.floor(Math.random() * 2)];
+      for (let i = 0; i < shipLength; i++) {
+        positions.push(Gameboard.addToPosition(startPos, direction, i));
+      }
+      console.log(positions);
+      if (positions.some((pos) => pos === false)) {
+        continue;
+      }
+      break;
+    }
+    let ship = new Ship(positions, shipId);
+    if (this.gameboard.checkValidShipPosition(ship)) {
+      return ship;
+    }
+    return false;
   }
 }
 

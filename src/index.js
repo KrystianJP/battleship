@@ -26,8 +26,8 @@ let selectionValid = false;
 let shipLengths = {
   C: 5,
   B: 4,
-  S: 3,
   D: 3,
+  S: 3,
   P: 2,
 };
 let placedShipIds = [];
@@ -163,9 +163,7 @@ function cellGridListeners(grid) {
 
 multiButt.addEventListener("click", function () {
   if (multiButt.textContent === "START") {
-    selection = false;
-    playing = true;
-    multiButt.textContent = "RESET";
+    startGame();
   } else if (multiButt.textContent === "ROTATE") {
     rotate(shipSelection, ".selection-ship");
   } else if (multiButt.textContent === "RESET") {
@@ -320,17 +318,23 @@ function unselectShip(ship) {
   ship.style.border = "none";
 }
 
+function startGame() {
+  playing = true;
+  selection = false;
+  multiButt.textContent = "RESET";
+  computerGameboard.generateRandomShips(computer, computerGrid);
+}
+
 // *** DELETE ONCE CUSTOM METHODS CREATED
 function placeInitialBoats() {
   // let patrolBoat = new Ship(["1:2", "1:3"], "P");
   // let submarine = new Ship(["3:2", "3:3", "3:4"], "S");
   // humanGameboard.place(humanGrid, patrolBoat);
   // humanGameboard.place(humanGrid, submarine);
-
-  let patrolBoatC = new Ship(["1:2", "1:3"], "P");
-  let submarineC = new Ship(["3:2", "3:3", "3:4"], "S");
-  computerGameboard.place(computerGrid, patrolBoatC);
-  computerGameboard.place(computerGrid, submarineC);
+  // let patrolBoatC = new Ship(["1:2", "1:3"], "P");
+  // let submarineC = new Ship(["3:2", "3:3", "3:4"], "S");
+  // computerGameboard.place(computerGrid, patrolBoatC);
+  // computerGameboard.place(computerGrid, submarineC);
 }
 
 gridCreation();
