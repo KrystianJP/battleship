@@ -167,15 +167,24 @@ multiButt.addEventListener("click", function () {
   }
 });
 
+shipSelection.addEventListener("click", function () {
+  if (selection && isShipSelected) {
+    console.log("hey");
+    unselectShip(shipSelection.querySelector("#selection" + selectedId));
+  }
+});
+
 shipSelection.querySelectorAll(".selection-ship").forEach((ship) => {
-  ship.addEventListener("click", () => {
+  ship.addEventListener("click", (e) => {
     let id = ship.id.substring(ship.id.length - 1);
     if (selection && !placedShipIds.includes(id)) {
+      console.log("yo");
       if (selectedId !== id) {
         selectShip(ship, shipSelection.querySelectorAll(".selection-ship"));
       } else {
         unselectShip(ship);
       }
+      e.stopPropagation();
     }
   });
 });
