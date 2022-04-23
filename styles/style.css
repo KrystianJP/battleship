@@ -133,3 +133,7 @@ body {
   background: rgb(84, 84, 255);
   color: white;
 }
+.rotate-button:hover {
+  background: rgb(108, 108, 255);
+  cursor: pointer;
+}

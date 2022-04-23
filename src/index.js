@@ -48,6 +48,36 @@ function cellShootListener(grid) {
   });
 }
 
+function hoverSelection(shipId, gridNr, gridCells) {
+  for (let i = 0; i < shipLengths[shipId]; i++) {
+    let startPosition = Gameboard.findPositionFromGridNr(gridNr, 10);
+    let position = Gameboard.addToPosition(startPosition, direction, i);
+    // making sure to flag position as invalid if it is too close to other ships too
+    if (position) {
+      if (!humanGameboard.checkValidPosition(position)) {
+        position = false;
+      }
+    }
+    if (position) {
+      gridCells[Gameboard.findGridNrFromPosition(position, 10)].classList.add(
+        "selected",
+      );
+    } else {
+      selectionValid = false;
+      // highlight them all as invalid
+      for (let i = 0; i < shipLengths[selectedId]; i++) {
+        let startPosition = Gameboard.findPositionFromGridNr(gridNr, 10);
+        let position = Gameboard.addToPosition(startPosition, direction, i);
+        if (position) {
+          gridCells[
+            Gameboard.findGridNrFromPosition(position, 10)
+          ].classList.add("selected-invalid");
+        }
+      }
+    }
+  }
+}
+
 function cellGridListeners(grid) {
   for (let gridNr = 0; gridNr < 100; gridNr++) {
     let gridCells = grid.querySelectorAll(".grid-cell");
@@ -56,38 +86,7 @@ function cellGridListeners(grid) {
     cell.addEventListener("mouseover", () => {
       if (selection && isShipSelected) {
         selectionValid = true;
-
-        for (let i = 0; i < shipLengths[selectedId]; i++) {
-          let startPosition = Gameboard.findPositionFromGridNr(gridNr, 10);
-          let position = Gameboard.addToPosition(startPosition, direction, i);
-          // making sure to flag position as invalid if it is too close to other ships too
-          if (position) {
-            if (!humanGameboard.checkValidPosition(position)) {
-              position = false;
-            }
-          }
-          if (position) {
-            gridCells[
-              Gameboard.findGridNrFromPosition(position, 10)
-            ].classList.add("selected");
-          } else {
-            selectionValid = false;
-            // highlight them all as invalid
-            for (let i = 0; i < shipLengths[selectedId]; i++) {
-              let startPosition = Gameboard.findPositionFromGridNr(gridNr, 10);
-              let position = Gameboard.addToPosition(
-                startPosition,
-                direction,
-                i,
-              );
-              if (position) {
-                gridCells[
-                  Gameboard.findGridNrFromPosition(position, 10)
-                ].classList.add("selected-invalid");
-              }
-            }
-          }
-        }
+        hoverSelection(selectedId, gridNr, gridCells);
       }
     });
 
@@ -107,7 +106,7 @@ function cellGridListeners(grid) {
         }
       }
     });
-    // removing placed shit when clicked
+    // removing placed ship when clicked
     cell.addEventListener("click", () => {
       if (!isShipSelected && selection) {
         let selectedShip;
@@ -134,6 +133,7 @@ function cellGridListeners(grid) {
             shipSelection.querySelectorAll(".selection-ship"),
           );
           shipElement.classList.remove("greyed-out");
+          hoverSelection(selectedShip.id, gridNr, gridCells);
         }
       }
     });
