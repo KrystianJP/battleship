@@ -36,11 +36,12 @@ class Player {
       do {
         let [randomNr1, randomNr2] = this._randomPair();
         var position = String(randomNr1) + ":" + String(randomNr2);
-        var valid = otherPlayer.gameboard.checkValidPosition(
+        // making sure not chosen next to hit
+        var nextToShip = !otherPlayer.gameboard.checkValidPosition(
           position,
           sunkShips,
         );
-      } while (!valid || !otherPlayer.gameboard.receiveAttack(position));
+      } while (nextToShip || !otherPlayer.gameboard.receiveAttack(position));
       return position;
     } else {
       let position = this.aiChooseHit(
