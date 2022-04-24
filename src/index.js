@@ -8,6 +8,7 @@ const gameGrids = document.querySelectorAll(".battleship-grid");
 const [humanGrid, computerGrid] = gameGrids;
 const shipSelection = document.querySelector(".ship-selection");
 const multiButt = document.querySelector(".multi-button");
+const randomButt = document.querySelector(".random-button");
 
 const gridCell = document.createElement("div");
 gridCell.classList.add("grid-cell");
@@ -50,7 +51,7 @@ function hoverSelection(shipId, gridNr, gridCells) {
     let position = Gameboard.addToPosition(startPosition, direction, i);
     // making sure to flag position as invalid if it is too close to other ships too
     if (position) {
-      if (!humanGameboard.checkValidPosition(position)) {
+      if (!humanGameboard.checkValidPosition(position, humanGameboard.ships)) {
         position = false;
       }
     }
@@ -192,6 +193,11 @@ shipSelection.querySelectorAll(".selection-ship").forEach((ship) => {
   });
 });
 
+randomButt.addEventListener("click", () => {
+  humanGameboard.generateRandomShips(human, humanGrid);
+  multiButt.textContent = "START";
+});
+
 // initial styling
 function gridCreation() {
   gameGrids.forEach((gameGrid) => {
@@ -224,7 +230,7 @@ function humanPlays(grid, gridNr) {
     return;
   }
   Gameboard.markHit(grid, gridNr);
-  human.attack(computer, Gameboard.findPositionFromGridNr(gridNr, 10));
+  human.humanAttack(computer, Gameboard.findPositionFromGridNr(gridNr, 10));
 
   // check if any ships are sunk
   sinkShips(grid, computerGameboard);
@@ -239,7 +245,7 @@ function humanPlays(grid, gridNr) {
 
 // computer's turn
 function computerPlays() {
-  let attackPosition = computer.attack(human);
+  let attackPosition = computer.computerAttack(human, humanGrid);
   let rowValue = Gameboard.getRowValue(attackPosition);
   let colValue = Gameboard.getColValue(attackPosition);
   let gridNr = Gameboard.findGridNr(10, rowValue, colValue);
@@ -298,10 +304,10 @@ function reset() {
   selection = true;
   isShipSelected = false;
   selectedId;
-  direction = "col";
   selectionValid = false;
   placedShipIds = [];
   playing = false;
+  randomButt.style.display = "initial";
 }
 
 // rotate button
@@ -357,6 +363,7 @@ function startGame() {
   playing = true;
   selection = false;
   multiButt.textContent = "RESET";
+  randomButt.style.display = "none";
   computerGameboard.generateRandomShips(computer, computerGrid);
 }
 

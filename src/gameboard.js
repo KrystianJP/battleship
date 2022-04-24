@@ -93,17 +93,17 @@ class Gameboard {
   checkValidShipPosition(newShip) {
     // gives true if a single value is invalid, so must be inverted
     return !newShip.positions.some((newPos) => {
-      return !this.checkValidPosition(newPos);
+      return !this.checkValidPosition(newPos, this.ships);
     });
   }
 
-  checkValidPosition(pos) {
+  checkValidPosition(pos, ships) {
     let newRowValue = Gameboard.getRowValue(pos);
     let newColValue = Gameboard.getColValue(pos);
 
     // get min + max value of row and col for each ship and check if the new position values are within them +-1
     // if a single value is INVALID, return TRUE
-    return !this.ships.some((placedShip) => {
+    return !ships.some((placedShip) => {
       let minRowValue = this._minRowValue(placedShip);
       let maxRowValue = this._maxRowValue(placedShip);
       let minColValue = this._minColValue(placedShip);

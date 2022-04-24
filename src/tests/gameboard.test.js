@@ -140,5 +140,9 @@ it("checks if position is valid correctly", () => {
   let ship = new Ship(["1:1, 1:2"]);
   gameboard.placeLogically(ship);
 
-  expect(gameboard.checkValidPosition("3:2")).toBe(true);
+  expect(gameboard.checkValidPosition("3:2", [ship])).toBe(true);
+});
+it("checks if position is out of bounds", () => {
+  let gameboard = new Gameboard();
+  expect(gameboard.checkValidPosition("4:1", [])).toBe(false);
 });

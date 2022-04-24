@@ -8,7 +8,7 @@ it("computer attacks and other player receives attack", () => {
   let gameboardC = new gameboardFile.Gameboard();
   let computer = new playerFile.Player(false, gameboardC);
   computer._randomPair = jest.fn().mockReturnValueOnce([2, 4]);
-  computer.attack(human);
+  computer.computerAttack(human);
   expect(gameboardH.hitPositions).toStrictEqual(["2:4"]);
 });
 
@@ -23,7 +23,7 @@ it("computer only attacks valid positions", () => {
     .mockReturnValueOnce([2, 4])
     .mockReturnValueOnce([2, 4])
     .mockReturnValueOnce([3, 4]);
-  computer.attack(human);
-  computer.attack(human);
+  computer.computerAttack(human);
+  computer.computerAttack(human);
   expect(gameboardH.hitPositions).toStrictEqual(["2:4", "3:4"]);
 });
