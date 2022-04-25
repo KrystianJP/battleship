@@ -194,7 +194,12 @@ shipSelection.querySelectorAll(".selection-ship").forEach((ship) => {
 });
 
 randomButt.addEventListener("click", () => {
+  reset();
   humanGameboard.generateRandomShips(human, humanGrid);
+  placedShipIds = Object.keys(shipLengths);
+  shipSelection.querySelectorAll(".selection-ship").forEach((ship) => {
+    ship.classList.add("greyed-out");
+  });
   multiButt.textContent = "START";
 });
 
